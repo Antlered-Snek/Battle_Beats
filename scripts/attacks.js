@@ -660,9 +660,9 @@ const greenCat_theThousandPawStrike = {
 					shape: 'none',
 					staminaCost: 0,
 					energyCost: 0,
-					cooldown: 0,
+					cooldown: 1000,
 					cooldownDuration: 1000,
-					count: 1,
+					count: 0,
 					countMax: 1,
 					countRegen: 1,
 					function: (self) => {
@@ -1602,10 +1602,10 @@ const rileyRoulette_armedBattalion = {
 					shape: 'none',
 					staminaCost: 0,
 					energyCost: 0,
-					cooldown: 0,
+					cooldown: 1000,
 					cooldownDuration: 1000,
-					count: 2,
-					countMax: 2,
+					count: 0,
+					countMax: 1,
 					countRegen: 1,
 					function: (self) => {
 		//self.attacks.ult.count--;
