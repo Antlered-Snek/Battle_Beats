@@ -5,6 +5,8 @@
 import print from './main.js'
 import { player1, player2 } from './players.js'
 
+import { greenCat_moveset, rileyRoulette_moveset } from './attacks.js'
+
 export const keys = {
 	// Global
 	f1: {pressed: true},
@@ -296,3 +298,230 @@ addEventListener("gamepaddisconnected", (e) => {
 		else if (controllerUser === "player2") player1.usingController = false;
 	}
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Temporary
+	// Player 1 ( Green Cat )
+let skill1P1 = document.getElementById('skill1P1');
+let skill2P1 = document.getElementById('skill2P1');
+let skill3P1 = document.getElementById('skill3P1');
+let skill4P1 = document.getElementById('skill4P1');
+
+
+
+skill1P1.addEventListener("change", (e) => {
+	let val = skill1P1.value;
+	switch(val) {
+		case 'Assault Armor':
+			player1.attacks.skill1 = greenCat_moveset.assaultArmor;
+			break;
+		case 'Anti Gravity Fish':
+			player1.attacks.skill1 = greenCat_moveset.antiGravityFish;
+			break;
+		case 'Multi Slash':
+			player1.attacks.skill1 = greenCat_moveset.multiSlash;
+			break;
+		case 'Chorus Jutsu':
+			player1.attacks.skill1 = greenCat_moveset.chorusJutsu;
+	}
+})
+
+
+skill2P1.addEventListener("change", (e) => {
+	let val = skill2P1.value;
+	switch(val) {
+		case 'Assault Armor':
+			player1.attacks.skill2 = greenCat_moveset.assaultArmor;
+			break;
+		case 'Anti Gravity Fish':
+			player1.attacks.skill2 = greenCat_moveset.antiGravityFish;
+			break;
+		case 'Multi Slash':
+			player1.attacks.skill2 = greenCat_moveset.multiSlash;
+			break;
+		case 'Chorus Jutsu':
+			player1.attacks.skill2 = greenCat_moveset.chorusJutsu;
+	}
+})
+
+
+skill3P1.addEventListener("change", (e) => {
+	let val = skill3P1.value;
+	switch(val) {
+		case 'Assault Armor':
+			player1.attacks.skill3 = greenCat_moveset.assaultArmor;
+			break;
+		case 'Anti Gravity Fish':
+			player1.attacks.skill3 = greenCat_moveset.antiGravityFish;
+			break;
+		case 'Multi Slash':
+			player1.attacks.skill3 = greenCat_moveset.multiSlash;
+			break;
+		case 'Chorus Jutsu':
+			player1.attacks.skill3 = greenCat_moveset.chorusJutsu;
+	}
+})
+
+
+skill4P1.addEventListener("change", (e) => {
+	let val = skill4P1.value;
+	switch(val) {
+		case 'Assault Armor':
+			player1.attacks.skill4 = greenCat_moveset.assaultArmor;
+			break;
+		case 'Anti Gravity Fish':
+			player1.attacks.skill4 = greenCat_moveset.antiGravityFish;
+			break;
+		case 'Multi Slash':
+			player1.attacks.skill4 = greenCat_moveset.multiSlash;
+			break;
+		case 'Chorus Jutsu':
+			player1.attacks.skill4 = greenCat_moveset.chorusJutsu;
+	}
+})
+
+
+
+
+
+
+
+
+
+
+	// Player 2 ( Riley Roulette )
+let skill1P2 = document.getElementById('skill1P2');
+let skill2P2 = document.getElementById('skill2P2');
+let skill3P2 = document.getElementById('skill3P2');
+let skill4P2 = document.getElementById('skill4P2');
+
+
+
+skill1P2.addEventListener("change", (e) => {
+	let val = skill1P2.value;
+	switch(val) {
+		case 'Heavy Arms':
+			player2.attacks.skill1 = rileyRoulette_moveset.heavyArms;
+			break;
+		case 'Raining Bombs':
+			player2.attacks.skill1 = rileyRoulette_moveset.rainingBombs;
+			break;
+		case 'Angel With a Shotgun':
+			player2.attacks.skill1 = rileyRoulette_moveset.angelWithAShotgun;
+			break;
+		case 'Bullet Hell':
+			player2.attacks.skill1 = rileyRoulette_moveset.bulletHell;
+			break;
+		case 'Gottschreck':
+			player2.attacks.skill1 = rileyRoulette_moveset.gottschreck;
+			break;
+		case 'Macross Missile Massacre':
+			player2.attacks.skill1 = rileyRoulette_moveset.macrossMissileMassacre;
+	}
+})
+
+
+skill2P2.addEventListener("change", (e) => {
+	let val = skill2P2.value;
+	switch(val) {
+		case 'Heavy Arms':
+			player2.attacks.skill2 = rileyRoulette_moveset.heavyArms;
+			break;
+		case 'Raining Bombs':
+			player2.attacks.skill2 = rileyRoulette_moveset.rainingBombs;
+			break;
+		case 'Angel With a Shotgun':
+			player2.attacks.skill2 = rileyRoulette_moveset.angelWithAShotgun;
+			break;
+		case 'Bullet Hell':
+			player2.attacks.skill2 = rileyRoulette_moveset.bulletHell;
+			break;
+		case 'Gottschreck':
+			player2.attacks.skill2 = rileyRoulette_moveset.gottschreck;
+			break;
+		case 'Macross Missile Massacre':
+			player2.attacks.skill2 = rileyRoulette_moveset.macrossMissileMassacre;
+	}
+})
+
+
+skill3P2.addEventListener("change", (e) => {
+	let val = skill3P2.value;
+	switch(val) {
+		case 'Heavy Arms':
+			player2.attacks.skill3 = rileyRoulette_moveset.heavyArms;
+			break;
+		case 'Raining Bombs':
+			player2.attacks.skill3 = rileyRoulette_moveset.rainingBombs;
+			break;
+		case 'Angel With a Shotgun':
+			player2.attacks.skill3 = rileyRoulette_moveset.angelWithAShotgun;
+			break;
+		case 'Bullet Hell':
+			player2.attacks.skill3 = rileyRoulette_moveset.bulletHell;
+			break;
+		case 'Gottschreck':
+			player2.attacks.skill3 = rileyRoulette_moveset.gottschreck;
+			break;
+		case 'Macross Missile Massacre':
+			player2.attacks.skill3 = rileyRoulette_moveset.macrossMissileMassacre;
+	}
+})
+
+
+skill4P2.addEventListener("change", (e) => {
+	let val = skill4P2.value;
+	switch(val) {
+		case 'Heavy Arms':
+			player2.attacks.skill4 = rileyRoulette_moveset.heavyArms;
+			break;
+		case 'Raining Bombs':
+			player2.attacks.skill4 = rileyRoulette_moveset.rainingBombs;
+			break;
+		case 'Angel With a Shotgun':
+			player2.attacks.skill4 = rileyRoulette_moveset.angelWithAShotgun;
+			break;
+		case 'Bullet Hell':
+			player2.attacks.skill4 = rileyRoulette_moveset.bulletHell;
+			break;
+		case 'Gottschreck':
+			player2.attacks.skill4 = rileyRoulette_moveset.gottschreck;
+			break;
+		case 'Macross Missile Massacre':
+			player2.attacks.skill4 = rileyRoulette_moveset.macrossMissileMassacre;
+	}
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1015,7 +1015,7 @@ export const rileyRoulette = {
 					comboBreaker: rileyRoulette_moveset.voidScythe,
 					skill1: rileyRoulette_moveset.angelWithAShotgun,
 					skill2: rileyRoulette_moveset.bulletHell,
-					skill3: rileyRoulette_moveset.rainingBombs,
+					skill3: rileyRoulette_moveset.heavyArms,
 					skill4: rileyRoulette_moveset.macrossMissileMassacre,
 					ult: rileyRoulette_moveset.armedBattalion
 				},

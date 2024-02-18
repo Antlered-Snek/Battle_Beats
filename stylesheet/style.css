@@ -24,13 +24,18 @@ canvas {
 }
 
 
-#info {
+#info, #temporary {
 	color: white;
 	position: relative;
 	left: 100px;
 }
 
-p {
+h1 {
+	position: relative;
+	left: -50px;
+}
+
+p, label, select {
 	position: relative;
 	left: 50px;
 }

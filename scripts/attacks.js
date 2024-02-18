@@ -18,6 +18,7 @@ import Effect, { effects, targetPath, force, slash } from './effects.js'
 
 // Green Cat
 const greenCat_catSlash = {
+					name: 'Cat Slash',
 					damage: 90,
 					size: {
 						width: 180,
@@ -117,6 +118,7 @@ const greenCat_catSlash = {
 
 
 const greenCat_catTheBatSmash = {
+					name: 'Cat The Bat Smash',
 					damage: 250,
 					size: {
 						width: 100,
@@ -129,10 +131,10 @@ const greenCat_catTheBatSmash = {
 						rotation: 0
 					},
 					shape: 'rectangle',
-					staminaCost: 20,
-					energyCost: 25,
+					staminaCost: 10,
+					energyCost: 15,
 					cooldown: 0,
-					cooldownDuration: 250,
+					cooldownDuration: 300,
 					count: 1,
 					countMax: 1,
 					countRegen: 1,
@@ -199,6 +201,7 @@ const greenCat_catTheBatSmash = {
 
 
 const greenCat_explosiveGodSlam = {
+					name: 'Explosive God Slam',
 					damage: 150,
 					size: {
 						width: 300,
@@ -211,10 +214,10 @@ const greenCat_explosiveGodSlam = {
 						rotation: 0
 					},
 					shape: 'rectangle',
-					staminaCost: 15,
-					energyCost: 20,
+					staminaCost: 10,
+					energyCost: 15,
 					cooldown: 0,
-					cooldownDuration: 350,
+					cooldownDuration: 450,
 					count: 1,
 					countMax: 1,
 					countRegen: 1,
@@ -274,6 +277,7 @@ const greenCat_explosiveGodSlam = {
 
 
 const greenCat_assaultArmor = {
+					name: 'Assault Armor',
 					damage: 800,
 					size: {
 						width: 0,
@@ -422,6 +426,7 @@ const greenCat_assaultArmor = {
 
 
 const greenCat_antiGravityFish = {
+					name: 'Anti Gravity Fish',
 					damage: 0,
 					size: {
 						width: 0,
@@ -434,10 +439,10 @@ const greenCat_antiGravityFish = {
 						rotation: 0
 					},
 					shape: 'none',
-					staminaCost: 1.0,
-					energyCost: 2.5,
+					staminaCost: 5,
+					energyCost: 25,
 					cooldown: 0,
-					cooldownDuration: 4.20,
+					cooldownDuration: 320,
 					count: 1,
 					countMax: 1,
 					countRegen: 1,
@@ -477,6 +482,7 @@ const greenCat_antiGravityFish = {
 
 
 const greenCat_multiSlash = {
+					name: 'Multi Slash',
 					damage: 0,
 					size: {
 						width: 0,
@@ -525,6 +531,7 @@ const greenCat_multiSlash = {
 
 
 const greenCat_chorusJutsu = {
+					name: 'Chorus Jutsu',
 					damage: 0,
 					size: {
 						width: 0,
@@ -537,8 +544,8 @@ const greenCat_chorusJutsu = {
 						rotation: 0
 					},
 					shape: 'none',
-					staminaCost: 10,
-					energyCost: 10,
+					staminaCost: 5,
+					energyCost: 20,
 					cooldown: 0,
 					cooldownDuration: 450,
 					count: 1,
@@ -587,6 +594,7 @@ const greenCat_chorusJutsu = {
 
 
 const greenCat_primalArmor = {
+					name: 'Primal Armor',
 					damage: 0,
 					size: {
 						width: 0,
@@ -599,8 +607,8 @@ const greenCat_primalArmor = {
 						rotation: 0
 					},
 					shape: 'circle',
-					staminaCost: 20,
-					energyCost: 20,
+					staminaCost: 30,
+					energyCost: 30,
 					cooldown: 0,
 					cooldownDuration: 1200,
 					count: 0,
@@ -637,6 +645,7 @@ const greenCat_primalArmor = {
 
 	// Ultimate
 const greenCat_theThousandPawStrike = {
+					name: 'The Thousand Paw Strike',
 					damage: 0,
 					size: {
 						width: 0,
@@ -805,26 +814,27 @@ export const greenCat_moveset = {
 
 // Riley Roulette
 const rileyRoulette_tommyGun = {
-						damage: 0,
-						size: {
-							width: 0,
-							height: 0,
-							radius: 0
-						},
-						offset: {
-							x: 0,
-							y: 0,
-							rotation: 0
-						},
-						shape: 'none',
-						staminaCost: 2,
-						energyCost: 0,
-						cooldown: 0,
-						cooldownDuration: 10,
-						count: 60,
-						countMax: 60,
-						countRegen: 1,
-						function: (self, isAttacking) => {
+					name: 'Tommy Gun',
+					damage: 0,
+					size: {
+						width: 0,
+						height: 0,
+						radius: 0
+					},
+					offset: {
+						x: 0,
+						y: 0,
+						rotation: 0
+					},
+					shape: 'none',
+					staminaCost: 2,
+					energyCost: 0,
+					cooldown: 0,
+					cooldownDuration: 10,
+					count: 60,
+					countMax: 60,
+					countRegen: 1,
+					function: (self, isAttacking) => {
 							let skill = rileyRoulette_tommyGun;
 							let enemies = self.enemies;
 		let enemy = self.enemies[0];
@@ -884,26 +894,27 @@ const rileyRoulette_tommyGun = {
 
 
 const rileyRoulette_theTouch = {
-						damage: 0,
-						size: {
-							width: 0,
-							height: 0,
-							radius: 0
-						},
-						offset: {
-							x: 25,
-							y: 25,
-							rotation: 0
-						},
-						shape: 'none',
-						staminaCost: 5,
-						energyCost: 10,
-						cooldown: 0,
-						cooldownDuration: 6000,
-						count: 6,
-						countMax: 6,
-						countRegen: 6,
-						function: (self, isAttacking) => {
+					name: 'The Touch',
+					damage: 0,
+					size: {
+						width: 0,
+						height: 0,
+						radius: 0
+					},
+					offset: {
+						x: 25,
+						y: 25,
+						rotation: 0
+					},
+					shape: 'none',
+					staminaCost: 5,
+					energyCost: 10,
+					cooldown: 0,
+					cooldownDuration: 6000,
+					count: 6,
+					countMax: 6,
+					countRegen: 6,
+					function: (self, isAttacking) => {
 							let skill = rileyRoulette_theTouch;
 							let enemies = self.enemies;
 		if ((self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0) && self.canMove && !isAttacking.value && !self.isChargeAttacking) {
@@ -986,26 +997,27 @@ const rileyRoulette_theTouch = {
 
 
 const rileyRoulette_joyride = {
-						damage: 50,
-						size: {
-							width: 80,
-							height: 300,
-							radius: 0
-						},
-						offset: {
-							x: -90,
-							y: 100,
-							rotation: 0
-						},
-						shape: 'rectangle',
-						staminaCost: 20,
-						energyCost: 30,
-						cooldown: 0,
-						cooldownDuration: 400,
-						count: 1,
-						countMax: 1,
-						countRegen: 1,
-						function: (self, isAttacking) => {
+					name: 'Joyride',
+					damage: 50,
+					size: {
+						width: 80,
+						height: 300,
+						radius: 0
+					},
+					offset: {
+						x: -90,
+						y: 100,
+						rotation: 0
+					},
+					shape: 'rectangle',
+					staminaCost: 5,
+					energyCost: 25,
+					cooldown: 0,
+					cooldownDuration: 400,
+					count: 1,
+					countMax: 1,
+					countRegen: 1,
+					function: (self, isAttacking) => {
 							let skill = rileyRoulette_joyride;
 							let enemies = self.enemies;
 		if ((self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0) && self.canMove && !self.isGrounded && !self.isChargeAttacking) {
@@ -1048,26 +1060,27 @@ const rileyRoulette_joyride = {
 };
 
 const rileyRoulette_heavyArms = {
-						damage: 0,
-						size: {
-							width: 0,
-							height: 0,
-							radius: 0
-						},
-						offset: {
-							x: 40,
-							y: 40,
-							rotation: 0
-						},
-						shape: 'rectangle',
-						staminaCost: 2.0,
-						energyCost: 3.0,
-						cooldown: 0,
-						cooldownDuration: 40.0,
-						count: 1,
-						countMax: 1,
-						countRegen: 1,
-						function: (self, isAttacking) => {
+					name: 'Heavy Arms',
+					damage: 0,
+					size: {
+						width: 0,
+						height: 0,
+						radius: 0
+					},
+					offset: {
+						x: 40,
+						y: 40,
+						rotation: 0
+					},
+					shape: 'rectangle',
+					staminaCost: 5,
+					energyCost: 20,
+					cooldown: 0,
+					cooldownDuration: 400,
+					count: 1,
+					countMax: 1,
+					countRegen: 1,
+					function: (self, isAttacking) => {
 							let skill = rileyRoulette_heavyArms;
 							let enemies = self.enemies;
 		if ((self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0) && self.canMove && !self.isChargeAttacking) {
@@ -1132,6 +1145,7 @@ const rileyRoulette_heavyArms = {
 };
 
 const rileyRoulette_rainingBombs = {
+					name: 'Raining Bombs',
 					damage: 0,
 					size: {
 						width: 0,
@@ -1144,10 +1158,10 @@ const rileyRoulette_rainingBombs = {
 						rotation: 0
 					},
 					shape: 'none',
-					staminaCost: 1.0,
-					energyCost: 1.0,
+					staminaCost: 5,
+					energyCost: 20,
 					cooldown: 0,
-					cooldownDuration: 45.0,
+					cooldownDuration: 400,
 					count: 1,
 					countMax: 1,
 					countRegen: 1,
@@ -1207,26 +1221,27 @@ const rileyRoulette_rainingBombs = {
 };
 
 const rileyRoulette_angelWithAShotgun = {
-						damage: 300,
-						size: {
-							width: 140,
-							height: 120,
-							radius: 0
-						},
-						offset: {
-							x: 0,
-							y: -10,
-							rotation: 0
-						},
-						shape: 'rectangle',
-						staminaCost: 20,
-						energyCost: 30,
-						cooldown: 0,
-						cooldownDuration: 300,
-						count: 1,
-						countMax: 1,
-						countRegen: 1,
-						function: (self, isAttacking) => {
+					name: 'Angel With a Shotgun',
+					damage: 300,
+					size: {
+						width: 140,
+						height: 120,
+						radius: 0
+					},
+					offset: {
+						x: 0,
+						y: -10,
+						rotation: 0
+					},
+					shape: 'rectangle',
+					staminaCost: 5,
+					energyCost: 25,
+					cooldown: 0,
+					cooldownDuration: 300,
+					count: 1,
+					countMax: 1,
+					countRegen: 1,
+					function: (self, isAttacking) => {
 							let skill = rileyRoulette_angelWithAShotgun;
 							let enemies = self.enemies;
 		if ((((self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0)) && self.canMove) && !self.isChargeAttacking) {
@@ -1332,26 +1347,27 @@ const rileyRoulette_angelWithAShotgun = {
 
 
 const rileyRoulette_bulletHell = {
-						damage: 0,
-						size: {
-							width: 0,
-							height: 0,
-							radius: 0
-						},
-						offset: {
-							x: 0,
-							y: -50,
-							rotation: 0
-						},
-						shape: 'none',
-						staminaCost: 0,
-						energyCost: 15,
-						cooldown: 0,
-						cooldownDuration: 500,
-						count: 2,
-						countMax: 2,
-						countRegen: 1,
-						function: (self, isAttacking) => {
+					name: 'Bullet Hell',
+					damage: 0,
+					size: {
+						width: 0,
+						height: 0,
+						radius: 0
+					},
+					offset: {
+						x: 0,
+						y: -50,
+						rotation: 0
+					},
+					shape: 'none',
+					staminaCost: 0,
+					energyCost: 15,
+					cooldown: 0,
+					cooldownDuration: 500,
+					count: 2,
+					countMax: 2,
+					countRegen: 1,
+					function: (self, isAttacking) => {
 							let skill = rileyRoulette_bulletHell;
 							let enemies = self.enemies;
 		if (skill.cooldown < 480 && (self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0) && !self.isChargeAttacking && self.canMove) {
@@ -1384,26 +1400,27 @@ const rileyRoulette_bulletHell = {
 
 
 const rileyRoulette_gottschreck = {
-						damage: 0,
-						size: {
-							width: 0,
-							height: 0,
-							radius: 0
-						},
-						offset: {
-							x: 0,
-							y: 0,
-							rotation: 0
-						},
-						shape: 'none',
-						staminaCost: 0,
-						energyCost: 20,
-						cooldown: 0,
-						cooldownDuration: 680,
-						count: 2,
-						countMax: 2,
-						countRegen: 2,
-						function: (self, isAttacking) => {
+					name: 'Gottschreck',
+					damage: 0,
+					size: {
+						width: 0,
+						height: 0,
+						radius: 0
+					},
+					offset: {
+						x: 0,
+						y: 0,
+						rotation: 0
+					},
+					shape: 'none',
+					staminaCost: 0,
+					energyCost: 20,
+					cooldown: 0,
+					cooldownDuration: 680,
+					count: 2,
+					countMax: 2,
+					countRegen: 2,
+					function: (self, isAttacking) => {
 							let skill = rileyRoulette_gottschreck;
 							let enemies = self.enemies;
 		if ((self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0) && !self.isChargeAttacking && self.canMove) {
@@ -1440,26 +1457,27 @@ const rileyRoulette_gottschreck = {
 
 
 const rileyRoulette_voidScythe = {
-						damage: 0,
-						size: {
-							width: 0,
-							height: 0,
-							radius: 0
-						},
-						offset: {
-							x: 0,
-							y: 0,
-							rotation: 0
-						},
-						shape: 'none',
-						staminaCost: 10,
-						energyCost: 10,
-						cooldown: 0,
-						cooldownDuration: 900,
-						count: 0,
-						countMax: 1,
-						countRegen: 1,
-						function: (self, isAttacking) => {
+					name: 'Void Scythe',
+					damage: 0,
+					size: {
+						width: 0,
+						height: 0,
+						radius: 0
+					},
+					offset: {
+						x: 0,
+						y: 0,
+						rotation: 0
+					},
+					shape: 'none',
+					staminaCost: 10,
+					energyCost: 30,
+					cooldown: 0,
+					cooldownDuration: 1200,
+					count: 0,
+					countMax: 1,
+					countRegen: 1,
+					function: (self, isAttacking) => {
 							let skill = rileyRoulette_voidScythe;
 							let enemies = self.enemies;
 		if ((self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0)) {
@@ -1488,6 +1506,7 @@ const rileyRoulette_voidScythe = {
 };
 
 const rileyRoulette_macrossMissileMassacre = {
+					name: 'Macross Missile Massacre',
 					damage: 0,
 					size: {
 						width: 0,
@@ -1500,10 +1519,10 @@ const rileyRoulette_macrossMissileMassacre = {
 						rotation: 0
 					},
 					shape: 'none',
-					staminaCost: 1.0,
-					energyCost: 2.5,
+					staminaCost: 5,
+					energyCost: 25,
 					cooldown: 0,
-					cooldownDuration: 42.0,
+					cooldownDuration: 620,
 					count: 1,
 					countMax: 1,
 					countRegen: 1,
@@ -1568,6 +1587,7 @@ const rileyRoulette_macrossMissileMassacre = {
 
 	// Ultimate
 const rileyRoulette_armedBattalion = {
+					name: 'Armed Battalion',
 					damage: 0,
 					size: {
 						width: 0,
@@ -1581,9 +1601,9 @@ const rileyRoulette_armedBattalion = {
 					},
 					shape: 'none',
 					staminaCost: 0,
-					energyCost: 15,
+					energyCost: 0,
 					cooldown: 0,
-					cooldownDuration: 500,
+					cooldownDuration: 1000,
 					count: 2,
 					countMax: 2,
 					countRegen: 1,

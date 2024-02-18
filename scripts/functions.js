@@ -87,3 +87,7 @@ export function pause() {
 	let pause = new MainMenu(0, pauseMenu);
 	return mainMenu.indexOf(pause);
 }
+
+export function changeSkill() {
+	print('gay');
+}
