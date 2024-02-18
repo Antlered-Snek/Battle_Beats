@@ -25,6 +25,7 @@ export default class Minion {
 		this.direction = direction;
 		this.color = color;
 		this.player = player;
+		this.drag = drag;
 
 		// States
 		this.isDestroyed = false;
@@ -51,10 +52,10 @@ export default class Minion {
 		this.position.x += this.velocity.x;
 		this.position.y += this.velocity.y;
 
-		if (this.acceleration.x > 0) this.acceleration.x -= drag;
-		else if (this.acceleration.x < 0) this.acceleration.x += drag;
-		if (this.acceleration.y > 0) this.acceleration.y -= drag;
-		else if (this.acceleration.y < 0) this.acceleration.y += drag;
+		if (this.acceleration.x > 0) this.acceleration.x -= self.drag;
+		else if (this.acceleration.x < 0) this.acceleration.x += self.drag;
+		if (this.acceleration.y > 0) this.acceleration.y -= self.drag;
+		else if (this.acceleration.y < 0) this.acceleration.y += self.drag;
 	}
 
 	action() {
@@ -168,8 +169,93 @@ const greenCat_slasher = {
 	color: 'indianRed'
 }
 
+const greenCat_striker = {
+	position:	{
+					x: 0,
+					y: 0,
+					rotation: 0
+				},
+	acceleration:	{
+					x: 0,
+					y: 0
+				},
+	velocity:	{
+					x: 0,
+					y: 0
+				},
+	size:		{
+					width: 100,
+					height: 100
+				},
+	extra: 		{	
+					damage: 50,
+					rot: 0,
+					cooldown: 0,
+					cooldownDuration: 10,
+					speed: 120,
+					canAim: true
+				},
+	behavior: (self, enemies) => {
+		let enemy = self.enemies[0];
+		let speed = self.extra.speed;
+		let innacuracy = 10;
+		let plyr;
+		if (self.player === 1) plyr = player1;
+		else if (self.player === 2) plyr = player2;
+		if (self.extra.cooldown > 0) self.extra.cooldown--;
+
+
+
+		for (let i in platforms) {
+			let platform = platforms[i];
+			if (rectangularCollision(self, platform) && platform.isHard) self.extra.canAim = true;
+		}
+
+		if ((self.position.x <= 0 || self.position.x+self.size.width >= canvas_width) || (self.position.y-self.size.height <= 0 || self.position.y >= canvas_height)) {
+			self.extra.canAim = true;
+			if (self.position.x <= 0 || self.position.x+self.size.width >= canvas_width) self.velocity.x *= -1;
+			if (self.position.y-self.size.height <= 0 || self.position.y >= canvas_height) self.velocity.y *= -1;
+		}
+
+
+		if (self.extra.canAim) {
+			let centerX = (enemy.position.x + enemy.size.width/2) - self.position.x;
+			let centerY = (enemy.position.y + enemy.size.height/2) - self.position.y;
+			self.extra.rot = Math.atan(centerY/centerX) * 180/Math.PI + Math.floor(Math.random()*innacuracy + innacuracy/2);
+			if (centerX < 0) self.extra.rot -= 180;
+			if (enemy.position.y < 0) self.extra.rot = Math.random()*360;
+			self.extra.canAim = false;
+		}
+		print(self.extra.rot);
+
+		self.position.rotation = self.extra.rot;
+		self.velocity.x = speed * Math.cos(self.position.rotation * Math.PI/180);
+		self.velocity.y = speed * Math.sin(self.position.rotation * Math.PI/180);
+		plyr.position = self.position;
+
+		if (self.velocity.x > 0) self.direction = "right";
+		else self.direction = "left";
+
+		
+		if (rectangularCollision(self, enemy) && self.extra.cooldown <= 0) {
+			self.extra.cooldown = self.extra.cooldown;
+			let damage = self.extra.damage;
+			let knockbackY;
+			if (enemy.position.y < enemy.size.width) knockbackY = 0;
+			else knockbackY = 5;
+			if (enemy.isBlocking) damage *= 0.01;
+			enemy.tookDamage(damage, self.direction, true, 0, knockbackY);
+			if (self.player === 1) player1.energyGain(self.extra.damage);
+			else if (self.player === 2) player2.energyGain(self.extra.damage);
+		}
+	},
+	direction: 'right',
+	color: 'indianRed'
+}
+
 export const greenCat_minions = {
-	slasher: greenCat_slasher
+	slasher: greenCat_slasher,
+	striker: greenCat_striker
 }
 
 
@@ -663,10 +749,160 @@ const rileyRoulette_scythe = {
 	color: 'pink'
 }
 
+const rileyRoulette_helicopter = {
+	position:	{
+					x: 0,
+					y: 50,
+					rotation: 0
+				},
+	acceleration:	{
+					x: 0,
+					y: 0
+				},
+	velocity:	{
+					x: 0,
+					y: 0
+				},
+	size:		{
+					width: 200,
+					height: 100
+				},
+	extra: 		{	
+					speed: 10,
+					cooldown: 0,
+					cooldownDuration: 1,
+					through: false,
+					escp: false
+				},
+	behavior: (self, enemies) => {
+		let side;
+		let teleport = self.extra.speed*2;
+		if (self.direction == "right") side = 1;
+		else if (self.direction == "left") side = -1;
+		self.velocity.x = self.extra.speed * side;
+
+		if ((self.position.x < 30 || self.position.x+self.size.width > canvas_width-30) && self.extra.through && !self.extra.escp) {
+			if (self.direction == "right" && self.velocity.x > 0) {
+				self.direction = "left";
+				self.position.x -= teleport;
+			}
+			else if (self.direction == "left" && self.velocity.x < 0) {
+				self.direction = "right";
+				self.position.x += teleport;
+			}
+		}
+		else if ((self.position.x > 30 && self.position.x+self.size.width < canvas_width-30) && !self.extra.through) self.extra.through = true;
+		if (self.extra.escp && ( (self.position.x+self.size.width < 0 || self.position.x > canvas_width) )) {
+			self.isDestroyed = true;
+			self.isIrrelevant = true;
+		}
+
+		// Attack
+		if (self.extra.cooldown <= 0 && (self.position.x > 0 && self.position.x+self.size.width < canvas_width)) {
+			self.extra.cooldown = self.extra.cooldownDuration;
+			let enemy = self.enemies[0];
+			let centerX = (self.position.x + self.size.width/2) - (enemy.position.x + enemy.size.width/2);
+			let centerY = (self.position.y + self.size.height/2) - (enemy.position.y + enemy.size.height/2);
+			let rot = Math.atan(centerY/centerX) + Math.floor(Math.random()*20 - 10)*Math.PI/180;
+			if (centerX >= 0) rot -= Math.PI;
+
+			let bullet = new Projectile(self.player, rileyRoulette_projectiles.rifleShot);
+			bullet.position = {
+				x: self.position.x + self.size.width/2,
+				y: self.position.y + self.size.height/2,
+				rotation: rot * 180/Math.PI
+			}
+			//if (centerX < 0) rot *= -1; 
+			bullet.velocity.x = 35 * Math.cos(rot);
+			bullet.velocity.y = 35 * Math.sin(rot);
+		}
+		else self.extra.cooldown--;
+	},
+	direction: 'right',
+	color: 'purple'
+}
+
+const rileyRoulette_fighterJet = {
+	position:	{
+					x: 0,
+					y: 50,
+					rotation: 0
+				},
+	acceleration:	{
+					x: 0,
+					y: 0
+				},
+	velocity:	{
+					x: 0,
+					y: 0
+				},
+	size:		{
+					width: 300,
+					height: 50
+				},
+	extra: 		{	
+					speed: 30,
+					cooldown: 0,
+					cooldownDuration: 10,
+					through: false,
+					escp: false
+				},
+	behavior: (self, enemies) => {
+		let side;
+		let teleport = self.extra.speed*2;
+		if (self.direction == "right") side = 1;
+		else if (self.direction == "left") side = -1;
+		self.velocity.x = self.extra.speed * side;
+
+		if ((self.position.x < -1000 || self.position.x+self.size.width > canvas_width+1000) && self.extra.through && !self.extra.escp) {
+			if (self.direction == "right" && self.velocity.x > 0) {
+				self.direction = "left";
+				self.position.x -= teleport;
+				self.position.y += Math.floor(Math.random()*40 - 20);
+			}
+			else if (self.direction == "left" && self.velocity.x < 0) {
+				self.direction = "right";
+				self.position.x += teleport;
+				self.position.y += Math.floor(Math.random()*40 - 20);
+			}
+		}
+		else if ((self.position.x > -1000 && self.position.x+self.size.width < canvas_width+1000) && !self.extra.through) self.extra.through = true;
+		if (self.extra.escp && ( (self.position.x+self.size.width < 0 || self.position.x > canvas_width) )) {
+			self.isDestroyed = true;
+			self.isIrrelevant = true;
+		}
+
+		// Attack
+		let enemy = self.enemies[0];
+		if (self.extra.cooldown <= 0 && (self.position.x > 0 && self.position.x+self.size.width < canvas_width) && enemy.position.y > 300) {
+			self.extra.cooldown = self.extra.cooldownDuration;
+			let centerX = (self.position.x + self.size.width/2) - (enemy.position.x + enemy.size.width/2);
+			let centerY = (self.position.y + self.size.height/2) - (enemy.position.y + enemy.size.height/2);
+			let rot = Math.atan(centerY/centerX);
+			if (centerX >= 0) rot -= Math.PI;
+
+			let rocket = new Projectile(self.player, rileyRoulette_projectiles.rocket);
+			rocket.position = {
+				x: self.position.x + self.size.width/2,
+				y: self.position.y + self.size.height/2,
+				rotation: rot * 180/Math.PI
+			}
+			//if (centerX < 0) rot *= -1; 
+			rocket.velocity.x = 35 * Math.cos(rot);
+			rocket.velocity.y = 35 * Math.sin(rot);
+		}
+		else self.extra.cooldown--;
+	},
+	direction: 'right',
+	color: 'purple'
+}
+
 export const rileyRoulette_minions = {
 	bulletOrbit: rileyRoulette_bulletOrbit,
 	bazookaOrbit: rileyRoulette_bazookaOrbit,
-	scythe: rileyRoulette_scythe
+	scythe: rileyRoulette_scythe,
+	helicopter: rileyRoulette_helicopter,
+	fighterJet: rileyRoulette_fighterJet
 }
 
 

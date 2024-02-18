@@ -3,19 +3,15 @@
 
 
 // Essentials
+const canvas1 = document.querySelector("#hud");
+export const c1 = canvas1.getContext('2d');
+
 const canvas = document.querySelector("#action");
 export const c = canvas.getContext('2d');
 
 const canvas2 = document.querySelector("#menu");
 export const c2 = canvas2.getContext('2d');
 
-// const canvas_stack = new CanvasStack("arena");;
-
-// const arena_layer = canvas_stack.createLayer();
-// export const c = document.getElementById(arena_layer).getContext('2d');
-
-// const menu_layer = canvas_stack.createLayer();
-// export const c2 = document.getElementById(menu_layer).getContext('2d');
 
 
 
@@ -25,8 +21,12 @@ export const c2 = canvas2.getContext('2d');
 export const canvas_height = 576;
 export const canvas_width = 1024;
 
+canvas1.height = canvas_height;
+canvas1.width = canvas_width;
+
 canvas.height = canvas_height;
 canvas.width = canvas_width;
+
 canvas2.height = canvas_height;
 canvas2.width = canvas_width;
 

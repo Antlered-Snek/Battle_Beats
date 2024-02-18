@@ -23,10 +23,17 @@ canvas {
 	top: 0;
 }
 
-#player1 {
+
+#info {
+	color: white;
 	position: relative;
-	height: 50px;
-	width: 50px;
-	background-color: lime;
-	z-index: 1;
+	left: 100px;
 }
+
+p {
+	position: relative;
+	left: 50px;
+}
+
+
+

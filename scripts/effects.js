@@ -142,6 +142,7 @@ export const explosion = {
 		radius: 0
 	},
 	behavior: (self) => {
+		screenShake(10, 4);
 		setTimeout( () => {
 			self.isDestroyed = true;
 			self.isIrrelevant = true;

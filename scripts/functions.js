@@ -4,7 +4,8 @@
 
 import print from './main.js'
 import { c, canvas_height, canvas_width, gravity, dashTime, drag, gameFrame } from './universalVar.js'
-import Menu, { ultInitial, ultProfile } from './menu.js'
+import Menu, { menuUI, ultInitial, ultProfile } from './menu.js'
+import MainMenu, { mainMenu, pauseMenu } from './mainMenu.js'
 
 export var freezeFrames = 0;
 
@@ -27,13 +28,13 @@ export function freezeFrameReduce() {
 	freezeFrames--;
 }
 
-export function screenShake(duration) {
+export function screenShake(duration, strength=16) {
 	let ran1;
 	let ran2;
 
 	let shake = setInterval( () => {
-		ran1 = Math.random()*20 - 10;
-		ran2 = Math.random()*20 - 10;
+		ran1 = Math.random()*strength - strength/2;
+		ran2 = Math.random()*strength - strength/2;
 		c.translate(ran1, ran2);
 	}, 10)
 	let unshake = setInterval( () => {
@@ -80,4 +81,9 @@ export function ultimateFreeze(player) {
 		square.isDestroyed = true;
 		square.isIrrelevant = true;
 	}, 2000)
+}
+
+export function pause() {
+	let pause = new MainMenu(0, pauseMenu);
+	return mainMenu.indexOf(pause);
 }

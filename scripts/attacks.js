@@ -4,7 +4,7 @@
 
 import print from './main.js'
 import { c, canvas_height, canvas_width, gravity, dashTime, drag, gameFrame } from './universalVar.js'
-import { rectangularCollision, freezeFrame, screenShake, getDistance } from './functions.js'
+import { rectangularCollision, freezeFrame, screenShake, getDistance, ultimateFreeze } from './functions.js'
 import { keys } from './inputHandler.js'
 import { player1, player2 } from './players.js'
 import Minion, { minions, greenCat_minions, rileyRoulette_minions } from './minions.js'
@@ -18,7 +18,7 @@ import Effect, { effects, targetPath, force, slash } from './effects.js'
 
 // Green Cat
 const greenCat_catSlash = {
-					damage: 65,
+					damage: 90,
 					size: {
 						width: 180,
 						height: 60,
@@ -30,17 +30,17 @@ const greenCat_catSlash = {
 						rotation: 0
 					},
 					shape: 'rectangle',
-					staminaCost: 5,
+					staminaCost: 10,
 					energyCost: 0,
 					cooldown: 0,
-					cooldownDuration: 10,
-					count: 1,
-					countMax: 1,
-					countRegen: 1,
+					cooldownDuration: 50,
+					count: 6,
+					countMax: 6,
+					countRegen: 2,
 					function: (self, isAttacking) => {
 							let skill = greenCat_catSlash;
 							let enemies = self.enemies;
-		if ((self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0) && self.canMove && !self.isChargeAttacking) {
+		if (skill.cooldown < 45 && (self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0) && self.canMove && !self.isChargeAttacking) {
 			let enemy;
 			skill.cooldown = skill.cooldownDuration;
 			self.directionUpdate();
@@ -421,7 +421,7 @@ const greenCat_assaultArmor = {
 };
 
 
-const greenCat_ninjaStars = {
+const greenCat_antiGravityFish = {
 					damage: 0,
 					size: {
 						width: 0,
@@ -442,10 +442,10 @@ const greenCat_ninjaStars = {
 					countMax: 1,
 					countRegen: 1,
 					function: (self, isAttacking) => {
-							let skill = greenCat_ninjaStars;
+							let skill = greenCat_antiGravityFish;
 							let enemies = self.enemies;
 		if ((self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0) && self.canMove && !self.isChargeAttacking) {
-			let bullet = greenCat_projectiles.shuriken;
+			let bullet = greenCat_projectiles.tuna;
 			if (skill.cooldown === 0) skill.cooldown = skill.cooldownDuration;
 			self.stamina -= skill.staminaCost;
 			self.staminaRegenDelay = 80;
@@ -466,10 +466,10 @@ const greenCat_ninjaStars = {
 					x: 0,
 					y: 0
 				};
-			}, 60)
+			}, 80)
 			setTimeout( () => {
 				clearInterval(shots);
-			}, 200)
+			}, 250)
 			self.dash(false);
 		}
 	}
@@ -611,26 +611,22 @@ const greenCat_primalArmor = {
 						let attacks = greenCat_primalArmor;
 		if ((self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0) && !self.isChargeAttacking && !self.isAttacking.ult.value) {
 			attacks.cooldown = attacks.cooldownDuration;
-			self.stamina -= self.attacks.ult.staminaCost;
+			self.stamina = 100;
 			self.staminaRegenDelay = 80;
 			self.energy -= attacks.energyCost;
 			attacks.count -= 1;
 			self.velocityResetFrames = 10;
 
 			isAttacking.value = true;
-			self.damageTakenMultiplier -= 0.1;
+			self.damageTakenMultiplier -= 0.4;
 			self.speedMultiplier += 0.5;
 			self.canBeStaggered = false;
 			self.staminaRegen += 1;
 
-			let staminaBoost = setInterval( () => {
-				self.stamina = 100;
-			}, 40);
 
 			setTimeout( () => {
-				clearInterval(staminaBoost);
 				isAttacking.value = false;
-				self.damageTakenMultiplier += 0.1;
+				self.damageTakenMultiplier += 0.4;
 				self.speedMultiplier -= 0.5;
 				self.staminaRegen -= 1;
 				self.canBeStaggered = true;
@@ -639,15 +635,81 @@ const greenCat_primalArmor = {
 	}
 };
 
+	// Ultimate
+const greenCat_theThousandPawStrike = {
+					damage: 0,
+					size: {
+						width: 0,
+						height: 0,
+						radius: 0
+					},
+					offset: {
+						x: 0,
+						y: 0,
+						rotation: 0
+					},
+					shape: 'none',
+					staminaCost: 0,
+					energyCost: 0,
+					cooldown: 0,
+					cooldownDuration: 1000,
+					count: 1,
+					countMax: 1,
+					countRegen: 1,
+					function: (self) => {
+		// self.attacks.ult.count--;
+		ultimateFreeze(self);
+		freezeFrame(80);
+
+		self.dash(false);
+		let enemy = self.enemies[0];
+		let stillDashing = true;
+		
+		setTimeout( () => {
+			if (self.isDashing) {
+				self.isDashing = false;
+				self.velocity.x *= 0.5;
+				self.acceleration.x = 0;
+				self.velocity.y = 0;
+			}
+
+			if (stillDashing) clearInterval(collide);
+		}, 1650);
+
+		let collide = setInterval( () => {
+			if (rectangularCollision(self, enemy)) {
+				stillDashing = false;
+				self.canMove = false;
+				self.isMoving = false;
+				self.canBeStaggered = false;
+				self.isUsingPhysics = false;
+				clearInterval(collide);
+
+				self.isAttacking.ult = true;
+				let nyoom = new Minion(self.player, greenCat_minions.striker);
+				nyoom.position = self.position;
+				setTimeout( () => {
+					nyoom.isDestroyed = true;
+					nyoom.isIrrelevant = true;
+					self.canMove = true;
+					self.canBeStaggered = true;
+					self.isUsingPhysics = true;
+				}, 5000)
+			}
+		}, 10)
+	}
+}
+
 export const greenCat_moveset = {
 	catSlash: greenCat_catSlash,
 	catTheBatSmash: greenCat_catTheBatSmash,
 	explosiveGodSlam: greenCat_explosiveGodSlam,
-	ninjaStars: greenCat_ninjaStars,
+	antiGravityFish: greenCat_antiGravityFish,
 	assaultArmor: greenCat_assaultArmor,
 	primalArmor: greenCat_primalArmor,
 	multiSlash: greenCat_multiSlash,
-	chorusJutsu: greenCat_chorusJutsu
+	chorusJutsu: greenCat_chorusJutsu,
+	theThousandPawStrike: greenCat_theThousandPawStrike // Ultimate
 }
 
 
@@ -821,7 +883,7 @@ const rileyRoulette_tommyGun = {
 };
 
 
-const rileyRoulette_divineRevolver = {
+const rileyRoulette_theTouch = {
 						damage: 0,
 						size: {
 							width: 0,
@@ -842,7 +904,7 @@ const rileyRoulette_divineRevolver = {
 						countMax: 6,
 						countRegen: 6,
 						function: (self, isAttacking) => {
-							let skill = rileyRoulette_divineRevolver;
+							let skill = rileyRoulette_theTouch;
 							let enemies = self.enemies;
 		if ((self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0) && self.canMove && !isAttacking.value && !self.isChargeAttacking) {
 			if (skill.cooldown === 0) skill.cooldown = skill.cooldownDuration;
@@ -861,12 +923,13 @@ const rileyRoulette_divineRevolver = {
 			let velocityX;
 			let velocityY;
 			let rot;
+			let limit = 45 * Math.PI/180;
 			
 
 			setTimeout( () => {
 				rot = Math.atan((self.position.y-enemy.position.y)/(self.position.x-enemy.position.x));
-				if (rot > Math.PI*0.25) rot = Math.PI*0.25;
-				else if (rot < -Math.PI*0.25) rot = -Math.PI*0.25;
+				if (rot > limit) rot = limit;
+				else if (rot < -limit) rot = -limit;
 
 				if (self.direction == "right") {
 					velocityX = speed*Math.cos(rot);
@@ -984,6 +1047,164 @@ const rileyRoulette_joyride = {
 	}
 };
 
+const rileyRoulette_heavyArms = {
+						damage: 0,
+						size: {
+							width: 0,
+							height: 0,
+							radius: 0
+						},
+						offset: {
+							x: 40,
+							y: 40,
+							rotation: 0
+						},
+						shape: 'rectangle',
+						staminaCost: 2.0,
+						energyCost: 3.0,
+						cooldown: 0,
+						cooldownDuration: 40.0,
+						count: 1,
+						countMax: 1,
+						countRegen: 1,
+						function: (self, isAttacking) => {
+							let skill = rileyRoulette_heavyArms;
+							let enemies = self.enemies;
+		if ((self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0) && self.canMove && !self.isChargeAttacking) {
+			if (skill.cooldown === 0) skill.cooldown = skill.cooldownDuration;
+			self.stamina -= skill.staminaCost;
+			self.energy -= skill.energyCost;
+			self.staminaRegenDelay = 80;
+			skill.count -= 1;
+			self.directionUpdate();
+
+			let enemy = self.enemies[0];
+			isAttacking.value = true;
+			self.isMoving = true;
+			self.chargeAttackDelay = 35;
+
+
+			let side;
+			let rot
+			if (self.direction == "right") {
+				side = 1;
+				rot = -90;
+			}
+			else if (self.direction == "left") {
+				side = -1;
+				rot = -90;
+			}
+			self.velocity.y = -25;
+
+			let bullet = rileyRoulette_projectiles.missile;
+			bullet.direction = self.direction;
+			rot -= 15*side;
+			let shots = setInterval( () => {
+				let result;
+				rot += 105*side;
+				rot %= 360;
+				bullet.position = {
+					x: self.position.x + skill.offset.x,
+					y: self.position.y + skill.offset.y,
+					rotation: rot
+				}
+				result = new Projectile(self.player, bullet);
+				result.velocity = {
+					x: 0,
+					y: 0
+				};
+				if (self.isStaggered) {
+					clearInterval(shots);
+					clearInterval(stop);
+					self.chargeAttackDelay = 0;
+				}
+			}, 60)
+
+			let stop = setInterval( () => {
+				self.velocity.x = -4 * side;
+			}, 10);
+			setTimeout( () => {
+				clearInterval(stop);
+				clearInterval(shots);
+			}, 600);
+		}
+	}
+};
+
+const rileyRoulette_rainingBombs = {
+					damage: 0,
+					size: {
+						width: 0,
+						height: 0,
+						radius: 0
+					},
+					offset: {
+						x: 0,
+						y: 0,
+						rotation: 0
+					},
+					shape: 'none',
+					staminaCost: 1.0,
+					energyCost: 1.0,
+					cooldown: 0,
+					cooldownDuration: 45.0,
+					count: 1,
+					countMax: 1,
+					countRegen: 1,
+					function: (self, isAttacking) => {
+							let skill = rileyRoulette_rainingBombs;
+							let enemies = self.enemies;
+		if ((self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0) && self.canMove && !self.isChargeAttacking) {
+			if (skill.cooldown === 0) skill.cooldown = skill.cooldownDuration;
+			self.stamina -= skill.staminaCost;
+			self.staminaRegenDelay = 80;
+			self.energy -= skill.energyCost;
+			skill.count -= 1;
+			self.directionUpdateDelay = 20;
+			isAttacking.value = true;
+
+
+
+			let speed = 10;
+			let enemy;
+			if (self.player === 1) enemy = player2;
+			else if (self.player === 2) enemy = player1;
+
+			let throws = setInterval( () => {
+				let centerX = (self.position.x - self.size.width/2) - (enemy.position.x - enemy.size.width/2);
+				let centerY = (self.position.y - self.size.height/2) - (enemy.position.y - enemy.size.height/2);
+				let rot = Math.atan(centerY/centerX) + Math.floor(Math.random()*30 - 15)*Math.PI/180;
+
+				let velocityX = Math.cos(rot) * speed;
+				let velocityY = Math.sin(rot) * speed;
+				if (centerX >= 0) {
+					velocityX *= -1;
+					velocityY *= -1;
+					self.direction = 'left';
+				}
+				else self.direction = 'right';
+				velocityY -= getDistance(self, enemy)*0.04;
+
+				let grenade = new Projectile(self.player, rileyRoulette_projectiles.grenade);
+				grenade.position = {
+					x: self.position.x + (self.size.width - grenade.size.width)/2,
+					y: self.position.y + (self.size.height - grenade.size.height)/2,
+					rotation: 0
+				}
+				grenade.velocity = {
+					x: velocityX,
+					y: velocityY,
+				}
+			}, 50)
+
+
+			setTimeout( () => {
+				isAttacking.value = false;
+				clearInterval(throws);
+			}, 320)
+		}
+	}
+};
 
 const rileyRoulette_angelWithAShotgun = {
 						damage: 300,
@@ -1241,7 +1462,7 @@ const rileyRoulette_voidScythe = {
 						function: (self, isAttacking) => {
 							let skill = rileyRoulette_voidScythe;
 							let enemies = self.enemies;
-		if ((self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0) && !self.isChargeAttacking) {
+		if ((self.stamina - skill.staminaCost >= 0) && (self.energy - skill.energyCost >= 0)) {
 			skill.cooldown = skill.cooldownDuration;
 			self.stamina -= skill.staminaCost;
 			self.energy -= skill.energyCost;
@@ -1321,7 +1542,6 @@ const rileyRoulette_macrossMissileMassacre = {
 					let result;
 					rot += 105*side;
 					rot %= 360;
-					print(rot)
 					bullet.position = {
 						x: self.position.x + skill.offset.x,
 						y: self.position.y + skill.offset.y,
@@ -1346,15 +1566,63 @@ const rileyRoulette_macrossMissileMassacre = {
 	}
 };
 
+	// Ultimate
+const rileyRoulette_armedBattalion = {
+					damage: 0,
+					size: {
+						width: 0,
+						height: 0,
+						radius: 0
+					},
+					offset: {
+						x: 0,
+						y: 50,
+						rotation: 0
+					},
+					shape: 'none',
+					staminaCost: 0,
+					energyCost: 15,
+					cooldown: 0,
+					cooldownDuration: 500,
+					count: 2,
+					countMax: 2,
+					countRegen: 1,
+					function: (self) => {
+		//self.attacks.ult.count--;
+		ultimateFreeze(self);
+		freezeFrame(80);
+
+
+		let side;
+		if (self.direction == 'right') side = 1;
+		else if (self.direction == 'left') side = -1;
+		self.velocity.x = -25*side;
+		self.velocity.y = -15;
+
+		let speed = 40;
+		let bullet = new Projectile(self.player, rileyRoulette_projectiles.ultimateShot);
+		bullet.position = {
+			x: self.position.x + self.attacks.ult.offset.x * side,
+			y: self.position.y + self.attacks.ult.offset.y,
+			rotation: 0
+		}
+		bullet.velocity.x = speed * side;
+		bullet.direction = self.direction;
+	}
+}
+
 export const rileyRoulette_moveset = {
 	tommyGun: rileyRoulette_tommyGun,
-	divineRevolver: rileyRoulette_divineRevolver,
+	theTouch: rileyRoulette_theTouch,
 	joyride: rileyRoulette_joyride,
+	heavyArms: rileyRoulette_heavyArms,
+	rainingBombs: rileyRoulette_rainingBombs,
 	angelWithAShotgun: rileyRoulette_angelWithAShotgun,
 	bulletHell: rileyRoulette_bulletHell,
 	gottschreck: rileyRoulette_gottschreck,
 	voidScythe: rileyRoulette_voidScythe,
-	macrossMissileMassacre: rileyRoulette_macrossMissileMassacre
+	macrossMissileMassacre: rileyRoulette_macrossMissileMassacre,
+	armedBattalion: rileyRoulette_armedBattalion // Ultimate
 };
 
 

@@ -2,8 +2,8 @@
 
 
 
-import print from './main.js'
-import { c, canvas_height, canvas_width, gravity, dashTime, drag, gameFrame } from './universalVar.js'
+import print, { showHud, showHitbox } from './main.js'
+import { c, c1, canvas_height, canvas_width, gravity, dashTime, drag, gameFrame } from './universalVar.js'
 import { rectangularCollision, freezeFrame, screenShake, getDistance, ultimateFreeze } from './functions.js'
 import { keys } from './inputHandler.js'
 import Platform, { platforms } from './platforms.js'
@@ -64,6 +64,7 @@ export default class Player {
 		this.enemies;
 		this.direction;
 		this.isGrounded;
+		this.isUsingPhysics = true;
 		this.canWallJump = false;
 		this.canBeGrounded = true;
 		this.isDashing = false;
@@ -120,42 +121,77 @@ export default class Player {
 		if (this.player === 1) side = 1;
 		else if (this.player === 2) side = -1;
 
-		this.platformPhysics();
+		if (this.isUsingPhysics) this.platformPhysics();
 		this.corrections();
 
 		// HitBoxes
-		if (this.isAttacking.basicAttack.value) this.drawHitbox(this.attacks.basicAttack);
-		if (this.isAttacking.upAttack.value) this.drawHitbox(this.attacks.upAttack);
-		if (this.isAttacking.downAttack.value) this.drawHitbox(this.attacks.downAttack);
-		if (this.isAttacking.comboBreaker.value) this.drawHitbox(this.attacks.comboBreaker);
-		if (this.isAttacking.skill1.value) this.drawHitbox(this.attacks.skill1);
-		if (this.isAttacking.skill2.value) this.drawHitbox(this.attacks.skill2);
-		if (this.isAttacking.skill3.value) this.drawHitbox(this.attacks.skill3);
-		if (this.isAttacking.skill4.value) this.drawHitbox(this.attacks.skill4);
-		if (this.isAttacking.ult.value) this.drawHitbox(this.attacks.ult);
-
-
-		// Cooldowns
-		this.drawCooldown(this.attacks.basicAttack, 0);
-		this.drawCooldown(this.attacks.upAttack, 1);
-		this.drawCooldown(this.attacks.downAttack, 2);
-		this.drawCooldown(this.attacks.comboBreaker, 3);
-		this.drawCooldown(this.attacks.skill1, 4);
-		this.drawCooldown(this.attacks.skill2, 5);
-		this.drawCooldown(this.attacks.skill3, 6);
-		this.drawCooldown(this.attacks.skill4, 7);
-		this.drawCooldown(this.attacks.ult, 8);
-
-		// Can't Block
-		if (!this.canBlock) {
-			if (side === 1) sideX = 25;
-			else if (side === -1) sideX = canvas_width - 65;
-
-			// c.fillStyle = 'red';
-			// c.fillRect(sideX, 160, 20, 20)
-
-			c.drawImage(guard_break, sideX, 160, 40, 40)
+		if (showHitbox) {
+			if (this.isAttacking.basicAttack.value) this.drawHitbox(this.attacks.basicAttack);
+			if (this.isAttacking.upAttack.value) this.drawHitbox(this.attacks.upAttack);
+			if (this.isAttacking.downAttack.value) this.drawHitbox(this.attacks.downAttack);
+			if (this.isAttacking.comboBreaker.value) this.drawHitbox(this.attacks.comboBreaker);
+			if (this.isAttacking.skill1.value) this.drawHitbox(this.attacks.skill1);
+			if (this.isAttacking.skill2.value) this.drawHitbox(this.attacks.skill2);
+			if (this.isAttacking.skill3.value) this.drawHitbox(this.attacks.skill3);
+			if (this.isAttacking.skill4.value) this.drawHitbox(this.attacks.skill4);
+			if (this.isAttacking.ult.value) this.drawHitbox(this.attacks.ult);
 		}
+
+
+		if (showHud) {
+			// Cooldowns
+			this.drawCooldown(this.attacks.basicAttack, 0);
+			this.drawCooldown(this.attacks.upAttack, 1);
+			this.drawCooldown(this.attacks.downAttack, 2);
+			this.drawCooldown(this.attacks.comboBreaker, 3);
+			this.drawCooldown(this.attacks.skill1, 4);
+			this.drawCooldown(this.attacks.skill2, 5);
+			this.drawCooldown(this.attacks.skill3, 6);
+			this.drawCooldown(this.attacks.skill4, 7);
+			this.drawCooldown(this.attacks.ult, 8);
+
+			// Can't Block
+			if (!this.canBlock) {
+				if (side === 1) sideX = 25;
+				else if (side === -1) sideX = canvas_width - 65;
+
+				// c.fillStyle = 'red';
+				// c.fillRect(sideX, 160, 20, 20)
+
+				c1.drawImage(guard_break, sideX, 160, 40, 40)
+			}
+
+
+			// Health
+			if (this.player === 1) sideX = 15;
+			else if (this.player === 2) sideX = 1009;
+
+			if ((this.health < this.healthBar) && (this.healthBarDelay === 0)) this.healthBar -= 100;
+			else if (this.health > this.healthBar) this.healthBar = this.health;
+			else if (this.healthBarDelay > 0) this.healthBarDelay--;
+
+			c1.fillStyle = 'indianRed';
+			c1.fillRect(sideX, 30, side*this.healthBar/this.maxHealth*470, 30);
+			c1.fillStyle = 'springGreen';
+			c1.fillRect(sideX, 30, side*this.health/this.maxHealth*470, 30);
+
+			// Stamina
+			if (this.player === 1) sideX = 20;
+			else if (this.player === 2) sideX = 1004;
+			if (this.stamina < this.staminaBar) this.staminaBar -= this.staminaRegen;
+			if (this.stamina > this.staminaBar) this.staminaBar += this.staminaRegen;
+			c1.fillStyle = 'orange';
+			c1.fillRect(sideX, 80, side*this.staminaBar*4.5, 10);
+
+			// Energy
+			if (this.player === 1) sideX = 20;
+			else if (this.player === 2) sideX = 1004;
+			if (this.energy < this.energyBar) this.energyBar -= 2;
+			if (this.energy > this.energyBar) this.energyBar += 2;
+			c1.fillStyle = 'cyan';
+			c1.fillRect(sideX, 100, side*this.energyBar*4.2, 5);
+		}
+
 
 		// Player
 		c.beginPath();
@@ -168,36 +204,6 @@ export default class Player {
 
 		// Character
 		this.drawCharacter(side, sideX, repeat);
-
-
-		// Health
-		if (this.player === 1) sideX = 15;
-		else if (this.player === 2) sideX = 1009;
-
-		if ((this.health < this.healthBar) && (this.healthBarDelay === 0)) this.healthBar -= 100;
-		else if (this.health > this.healthBar) this.healthBar = this.health;
-		else if (this.healthBarDelay > 0) this.healthBarDelay--;
-
-		c.fillStyle = 'indianRed';
-		c.fillRect(sideX, 30, side*this.healthBar/this.maxHealth*470, 30);
-		c.fillStyle = 'springGreen';
-		c.fillRect(sideX, 30, side*this.health/this.maxHealth*470, 30);
-
-		// Stamina
-		if (this.player === 1) sideX = 20;
-		else if (this.player === 2) sideX = 1004;
-		if (this.stamina < this.staminaBar) this.staminaBar -= this.staminaRegen;
-		if (this.stamina > this.staminaBar) this.staminaBar += this.staminaRegen;
-		c.fillStyle = 'orange';
-		c.fillRect(sideX, 80, side*this.staminaBar*4.5, 10);
-
-		// Energy
-		if (this.player === 1) sideX = 20;
-		else if (this.player === 2) sideX = 1004;
-		if (this.energy < this.energyBar) this.energyBar -= 2;
-		if (this.energy > this.energyBar) this.energyBar += 2;
-		c.fillStyle = 'cyan';
-		c.fillRect(sideX, 100, side*this.energyBar*4.2, 5);
 	}
 
 	platformPhysics() {
@@ -404,27 +410,27 @@ export default class Player {
 		let sideX;
 		if (this.player === 1) sideX = 35 + 50*order;
 		else if (this.player === 2) sideX = 989 - 50*order;
-		c.fillStyle = 'orange';
-		if (this.stamina - atk.staminaCost < 0 || this.energy - atk.energyCost < 0) c.fillStyle = 'red';
-		c.beginPath();
-		c.arc(sideX, 135, 15, 0, Math.PI*2, false);
-		c.fill();
-		c.closePath();
+		c1.fillStyle = 'orange';
+		if (this.stamina - atk.staminaCost < 0 || this.energy - atk.energyCost < 0) c1.fillStyle = 'red';
+		c1.beginPath();
+		c1.arc(sideX, 135, 15, 0, Math.PI*2, false);
+		c1.fill();
+		c1.closePath();
 		if (atk.cooldown > 0) {
-			c.fillStyle = 'brown';
-			c.beginPath();
-			c.arc(sideX, 135, 15, 0, (atk.cooldown/atk.cooldownDuration)*Math.PI*2, false);
-			c.fill();
-			c.closePath();
+			c1.fillStyle = 'brown';
+			c1.beginPath();
+			c1.arc(sideX, 135, 15, 0, (atk.cooldown/atk.cooldownDuration)*Math.PI*2, false);
+			c1.fill();
+			c1.closePath();
 		}
 
-		c.fillStyle = 'black';
-		c.beginPath();
-		c.font = '15px Arial';
-		c.textAlign = 'center';
-		c.textBaseline = 'middle';
-		c.fillText(`${atk.count}`, sideX, 135);	
-		c.closePath();
+		c1.fillStyle = 'black';
+		c1.beginPath();
+		c1.font = '15px Arial';
+		c1.textAlign = 'center';
+		c1.textBaseline = 'middle';
+		c1.fillText(`${atk.count}`, sideX, 135);	
+		c1.closePath();
 	}
 
 	ground() {
@@ -859,11 +865,11 @@ export default class Player {
 	}
 
 	update() {
-		this.ground();
+		if (this.isUsingPhysics) this.ground();
 		this.staminaGaugeRegen();
 		this.combat();
-		this.vectors();
-		this.ground();
+		if (this.isUsingPhysics) this.vectors();
+		if (this.isUsingPhysics) this.ground();
 		this.draw();
 	}
 }
@@ -939,36 +945,11 @@ export const greenCat = {
 					upAttack: greenCat_moveset.catTheBatSmash,
 					downAttack: greenCat_moveset.explosiveGodSlam,
 					comboBreaker: greenCat_moveset.primalArmor,
-					skill1: greenCat_moveset.ninjaStars,
+					skill1: greenCat_moveset.antiGravityFish,
 					skill2: greenCat_moveset.assaultArmor,
 					skill3: greenCat_moveset.multiSlash,
 					skill4: greenCat_moveset.chorusJutsu,
-					ult: {
-						damage: 0,
-						size: {
-							width: 0,
-							height: 0,
-							radius: 80
-						},
-						offset: {
-							x: 0,
-							y: 20,
-							rotation: 0
-						},
-						shape: 'circle',
-						staminaCost: 0,
-						energyCost: 0,
-						cooldown: 0,
-						cooldownDuration: 1000,
-						count: 1,
-						countMax: 1,
-						countRegen: 1,
-						function: (self) => {
-			//self.attacks.ult.count--;
-			ultimateFreeze(self);
-			freezeFrame(80);
-						}
-					}, //
+					ult: greenCat_moveset.theThousandPawStrike
 				},
 	color: 'springGreen',
 	spriteInfo: {
@@ -1029,40 +1010,14 @@ export const rileyRoulette = {
 				},
 	attacks: 	{
 					basicAttack: rileyRoulette_moveset.tommyGun,
-					upAttack: rileyRoulette_moveset.divineRevolver,
+					upAttack: rileyRoulette_moveset.theTouch,
 					downAttack: rileyRoulette_moveset.joyride,
 					comboBreaker: rileyRoulette_moveset.voidScythe,
 					skill1: rileyRoulette_moveset.angelWithAShotgun,
 					skill2: rileyRoulette_moveset.bulletHell,
-					skill3: rileyRoulette_moveset.gottschreck,
+					skill3: rileyRoulette_moveset.rainingBombs,
 					skill4: rileyRoulette_moveset.macrossMissileMassacre,
-					ult: {
-						damage: 0,
-						size: {
-							width: 0,
-							height: 0,
-							radius: 0
-						},
-						offset: {
-							x: 0,
-							y: -50,
-							rotation: 0
-						},
-						shape: 'none',
-						staminaCost: 0,
-						energyCost: 15,
-						cooldown: 0,
-						cooldownDuration: 500,
-						count: 2,
-						countMax: 2,
-						countRegen: 1,
-						function: (self) => {
-			//self.attacks.ult.count--;
-			ultimateFreeze(self);
-			freezeFrame(80);
-						}
-					}, //
-
+					ult: rileyRoulette_moveset.armedBattalion
 				},
 	color: "wheat"
 };
@@ -1078,16 +1033,6 @@ export const player2 = new Player(2, rileyRoulette);
 player1.enemies = [player2];
 player2.enemies = [player1];
 
-player1.position = {
-					x: 200,
-					y: 466,
-					rotation: 0
-				};
-player2.position = {
-					x: 724,
-					y: 466,
-					rotation: 0
-				};
 
 
 

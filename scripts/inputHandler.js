@@ -6,6 +6,11 @@ import print from './main.js'
 import { player1, player2 } from './players.js'
 
 export const keys = {
+	// Global
+	f1: {pressed: true},
+	f3: {pressed: true},
+	escp: {pressed: true},
+
 	// Player 1 Keys
 		// Movement
 	w: {pressed: false},
@@ -60,6 +65,11 @@ export const keys = {
 // Input
 document.addEventListener('keydown', (e) => {
 	e.preventDefault();
+	// Global
+	if (e.code == 'F1') keys.f1.pressed = !keys.f1.pressed;
+	if (e.code == 'F3') keys.f3.pressed = !keys.f3.pressed;
+	if (e.code == 'Escape') keys.escp.pressed = !keys.escp.pressed;
+
 	// Player 1 Input
 		// Movement
 	if (e.code == "KeyD") {

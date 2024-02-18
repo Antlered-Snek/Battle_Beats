@@ -7,6 +7,7 @@ import { c, canvas_height, canvas_width, gravity, dashTime, drag } from './unive
 import { rectangularCollision, freezeFrame, screenShake, getDistance } from './functions.js'
 import { keys } from './inputHandler.js'
 import { player1, player2 } from './players.js'
+import Minion, { minions, greenCat_minions, rileyRoulette_minions } from './minions.js'
 import Platform, { platforms } from './platforms.js'
 import Effect, { effects, targetPath, explosion } from './effects.js'
 
@@ -141,7 +142,7 @@ export default class Projectile {
 // Objects
 
 	// Green Cat
-const greenCat_shuriken = {
+const greenCat_tuna = {
 	position:	{
 					x: 0,
 					y: 0,
@@ -156,14 +157,20 @@ const greenCat_shuriken = {
 					y: 0
 				},
 	size:		{
-					width: 20,
+					width: 60,
 					height: 20
 				},
 	attackFunction: (self, enemy) => {
 		// let maxAcc = 300;
 		// let maxSpeed = 16;
-		let speed = 20;
-		let tracking = 5;
+		let speed = 2;
+		let tracking = 3;
+		if (self.isDestroyed) {
+			speed = 35;
+			tracking = 0.5;
+		}
+
+
 		let centerX = (enemy.position.x + enemy.size.width/2) - self.position.x;
 		let centerY = (enemy.position.y + enemy.size.height/2) - self.position.y;
 		let rot = Math.atan(centerY/centerX) * 180/Math.PI;
@@ -179,6 +186,10 @@ const greenCat_shuriken = {
 		self.velocity.y = speed * Math.sin(self.position.rotation * Math.PI/180);
 		
 		
+		setTimeout( () => {
+			self.isDestroyed = true;
+			// self.position.rotation = rot;
+		}, 1000)
 
 		
 
@@ -205,16 +216,14 @@ const greenCat_shuriken = {
 		// if (self.position.y - self.velocity.y < enemy.position.y) self.acceleration.y += maxAcc/2;
 		// else if (self.position.y + self.velocity.y > enemy.position.y) self.acceleration.y -= maxAcc/2;
 
-		if (rectangularCollision(self, enemy)) {
+		if (rectangularCollision(self, enemy) && self.isDestroyed) {
 			let damage = 120;
 			enemy.bounceNumber = 0;
 			enemy.tookDamage(damage, self.direction, true, Math.abs(self.velocity.x*0.8), Math.abs(self.velocity.y*0.8)+5);
-			self.isDestroyed = true;
 			self.isIrrelevant = true;
 			if (enemy.player === 1) player2.energyGain(damage);
 			else if (enemy.player === 2) player1.energyGain(damage);
 		}
-		self.isIrrelevant = self.isDestroyed;
 },
 	direction: 'right',
 	color: 'cyan'
@@ -253,7 +262,6 @@ const greenCat_pearl = {
 			platform = platforms[i]
 			if (rectangularCollision(self, platform) && platform.isHard) {
 				self.isDestroyed = true;
-				print(self.position.x - (plyr.size.width - self.size.width)/2)
 				plyr.position = {
 					x: self.position.x - (plyr.size.width - self.size.width)/2,
 					y: self.position.y - (plyr.size.height - self.size.height)/2 - 25,
@@ -286,7 +294,7 @@ const greenCat_pearl = {
 }
 
 export const greenCat_projectiles = {
-	shuriken: greenCat_shuriken,
+	tuna: greenCat_tuna,
 	pearl: greenCat_pearl
 }
 
@@ -369,13 +377,13 @@ const rileyRoulette_rifleShot = {
 			if (enemy.player === 1) player2.energyGain(damage*1.5);
 			else if (enemy.player === 2) player1.energyGain(damage*1.5);
 
-			let sup = rileyRoulette_moveset.divineRevolver;
+			let sup = rileyRoulette_moveset.theTouch;
 			if (sup.count < sup.countMax && sup.cooldown + 2 < sup.cooldownDuration) sup.cooldown -= 20;
 		}
 		self.isIrrelevant = self.isDestroyed;
 },
 	direction: 'right',
-	color: 'red'
+	color: 'pink'
 }
 
 const rileyRoulette_rocket = {
@@ -397,39 +405,6 @@ const rileyRoulette_rocket = {
 					height: 28
 				},
 	attackFunction: (self, enemy) => {
-		let maxAcc = 200;
-		let maxSpeed = 60;
-		let tracking = 5;
-		let centerX = (enemy.position.x + enemy.size.width/2) - self.position.x;
-		let centerY = (enemy.position.y + enemy.size.height/2) - self.position.y;
-		self.position.rotation = Math.atan(self.velocity.y/self.velocity.x);
-		if (self.velocity.x === 0) self.position.rotation *= -1;
-
-		self.acceleration.x = centerX*tracking;
-		if (self.acceleration.x > maxAcc) self.acceleration.x = maxAcc;
-		else if (self.acceleration.x < -maxAcc) self.acceleration.x = -maxAcc;
-
-		self.acceleration.y = centerY*tracking;
-		if (self.acceleration.x > maxAcc) self.acceleration.x = maxAcc;
-		else if (self.acceleration.x < -maxAcc) self.acceleration.x = -maxAcc;
-
-		while (self.velocity.x**2 + self.velocity.y**2 > maxSpeed**2) {
-			if (self.velocity.x > 0) self.velocity.x--;
-			else if (self.velocity.x < 0) self.velocity.x++;
-
-			if (self.velocity.y > 0) self.velocity.y--;
-			else if (self.velocity.y < 0) self.velocity.y++;
-		}
-		if (self.velocity.x > 0) self.direction = 'right';
-		else if (self.velocity.x < 0) self.direction = 'left';
-
-		if (self.position.x - self.velocity.x < enemy.position.x) self.acceleration.x += maxAcc * 5;
-		else if (self.position.x + self.velocity.x > enemy.position.x) self.acceleration.x -= maxAcc * 5;
-		if (self.position.y - self.velocity.y < enemy.position.y) self.acceleration.y += maxAcc * 5;
-		else if (self.position.y + self.velocity.y > enemy.position.y) self.acceleration.y -= maxAcc * 5;
-
-		self.position.rotation = Math.atan(self.velocity.y/self.velocity.x) * 180/Math.PI;
-
 		if (rectangularCollision(self, enemy)) self.isDestroyed = true;
 		for (let i in platforms) {
 			if (platforms[i].isHard && rectangularCollision(self, platforms[i])) self.isDestroyed = true;
@@ -474,9 +449,9 @@ const rileyRoulette_rocket = {
 				}
 			}
 		}
-},
+	},
 	direction: 'right',
-	color: 'pink'
+	color: 'red'
 }
 
 const rileyRoulette_missile = {
@@ -540,7 +515,7 @@ const rileyRoulette_missile = {
 			if (enemy.player === 1) player2.energyGain(damage);
 			else if (enemy.player === 2) player1.energyGain(damage);
 
-			let sup = rileyRoulette_moveset.divineRevolver;
+			let sup = rileyRoulette_moveset.theTouch;
 			if (sup.count < sup.countMax && sup.cooldown + 2 < sup.cooldownDuration) sup.cooldown -= 40;
 
 			let boom = new Effect(explosion, {width: 0, height: 0, radius: 50});
@@ -557,12 +532,189 @@ const rileyRoulette_missile = {
 		}
 },
 	direction: 'right',
-	color: 'pink'
+	color: 'white'
+}
+
+const rileyRoulette_grenade = {
+	position:	{
+					x: 0,
+					y: 0,
+					rotation: 0
+				},
+	acceleration:	{
+					x: 0,
+					y: 0
+				},
+	velocity:	{
+					x: 0,
+					y: 0
+				},
+	size:		{
+					width: 20,
+					height: 20
+				},
+	attackFunction: (self, enemy) => {
+		self.acceleration.y = gravity;
+		let platform;
+		let plyr;
+
+		if (self.velocity.x <= 0) self.direction = 'left';
+		else self.direction = 'right';
+
+		if (self.player === 1) plyr = player1;
+		else if (self.player === 2) plyr = player2;
+
+		if (self.isDestroyed) {
+			for (let i in platforms) {
+				let platform = platforms[i];
+				if (rectangularCollision(self, platform) && platform.isHard) {
+					if (self.position.y + self.size.height <= platform.position.y + self.velocity.y + 25) {
+						self.acceleration.x *= 1;
+						self.acceleration.y = -1;
+						self.velocity.x *= 1;
+						self.velocity.y *= -1;
+					}
+					else {
+						self.acceleration.x *= -1;
+						self.acceleration.y = 1;
+						self.velocity.x *= -1;
+						self.velocity.y *= 1;
+					}
+				}
+			}
+		}
+		setTimeout( () => {
+			if (!self.isIrrelevant) {
+				self.isIrrelevant = true;
+
+				let damage = 500;
+				let radius = 100;
+				let direction;
+
+				let bubble = {
+					position: {
+						x: self.position.x + self.size.width/2,
+						y: self.position.y + self.size.height/2,
+						rotation: 0
+					}
+				}
+				let enemyBubble = {
+					position: {
+						x: enemy.position.x + enemy.size.width/2,
+						y: enemy.position.y + enemy.size.height/2,
+						rotation: 0
+					}
+				}
+				if (bubble.position.x < enemyBubble.position.x) direction = 'right';
+				else direction = 'left';
+
+				let boom = new Effect(explosion, {width: 0, height: 0, radius: radius});
+				boom.position = bubble.position;
+
+				if (getDistance(bubble, enemyBubble) <= radius) {
+					enemy.tookDamage(damage, direction, true, 10, 0);
+					plyr.energyGain(damage);
+				}
+
+				let rot = 0;
+				for (let i=0; i<8; i++) {
+					let result;
+					rot += 105;
+					rot %= 360;
+					
+					result = new Projectile(self.player, rileyRoulette_projectiles.missile);
+					result.position = {
+						x: self.position.x,
+						y: self.position.y,
+						rotation: rot
+					}
+					result.velocity = {
+						x: 0,
+						y: 0
+					}
+				}
+			}
+		}, 3000)
+},
+	direction: 'right',
+	color: 'red'
+}
+
+const rileyRoulette_ultimateShot = {
+	position:	{
+					x: 0,
+					y: 0,
+					rotation: 0
+				},
+	acceleration:	{
+					x: 0,
+					y: 0
+				},
+	velocity:	{
+					x: 0,
+					y: 0
+				},
+	size:		{
+					width: 20,
+					height: 20
+				},
+	attackFunction: (self, enemy) => {
+		if (rectangularCollision(self, enemy)) {
+			let damage = 600;
+			enemy.bounceNumber = 0;
+
+			if (!enemy.isBlocking) {
+				let helicopter;
+				let fighterJet;
+					// Helicopter
+				helicopter = new Minion(self.player, rileyRoulette_minions.helicopter);
+				helicopter.extra.through = false;
+				helicopter.extra.escp = false;
+				if (Math.floor(Math.random()*2)) {
+					helicopter.position.x = -100 - helicopter.size.width;
+					helicopter.direction = 'right';
+				}
+				else {
+					helicopter.position.x = 100 + canvas_width;
+					helicopter.direction = 'left';
+				}
+
+					// Fighter Jet
+				fighterJet = new Minion(self.player, rileyRoulette_minions.fighterJet);
+				fighterJet.extra.through = false;
+				fighterJet.extra.escp= false;
+				if (Math.floor(Math.random()*2)) {
+					fighterJet.position.x = -100 - fighterJet.size.width;
+					fighterJet.direction = 'right';
+				}
+				else {
+					fighterJet.position.x = 100 + canvas_width;
+					fighterJet.direction = 'left';
+				}
+
+				setTimeout( () => {
+					helicopter.extra.escp = true;
+					fighterJet.extra.escp = true;
+				}, 5000)
+			}
+
+			enemy.tookDamage(damage, self.direction, true, 30, 20, true);
+			self.isDestroyed = true;
+			if (enemy.player === 1) player2.energyGain(damage);
+			else if (enemy.player === 2) player1.energyGain(damage);
+		
+		}
+		self.isIrrelevant = self.isDestroyed;
+},
+	direction: 'right',
+	color: 'red'
 }
 
 export const rileyRoulette_projectiles = {
 	revolverShot: rileyRoulette_revolverShot,
 	rifleShot: rileyRoulette_rifleShot,
 	rocket: rileyRoulette_rocket,
-	missile: rileyRoulette_missile
+	missile: rileyRoulette_missile,
+	grenade: rileyRoulette_grenade,
+	ultimateShot: rileyRoulette_ultimateShot
 }
